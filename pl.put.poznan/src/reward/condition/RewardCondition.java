@@ -1,6 +1,13 @@
 package reward.condition;
 
 import reward.Reward;
+import reward.RewardIsNotValidException;
 
-public interface RewardCondition extends Reward {
+public abstract class RewardCondition implements Reward {
+    protected Reward reward;
+
+    @Override
+    public int validate() throws RewardIsNotValidException {
+        return this.reward.validate();
+    }
 }
