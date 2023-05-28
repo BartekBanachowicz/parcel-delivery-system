@@ -1,0 +1,4 @@
+package payment;
+
+class TransactionsRepository {
+}

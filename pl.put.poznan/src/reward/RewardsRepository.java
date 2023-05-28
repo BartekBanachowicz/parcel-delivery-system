@@ -1,0 +1,4 @@
+package reward;
+
+class RewardsRepository {
+}

@@ -1,0 +1,4 @@
+package privilege;
+
+class PrivilegeRepository {
+}
