@@ -1,18 +1,21 @@
 package user.courier;
 
+import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import storage.Storage;
 import user.UserDeactivatedException;
 
-public class DeactivatedCourier implements CourierState{
+import java.util.Optional;
+
+public class DeactivatedCourier implements CourierState {
 
     @Override
-    public void getParcel(Parcel parcel) {
+    public Optional<Parcel> getParcel(ParcelOperationCommand command, Storage storage) {
         throw new UserDeactivatedException();
     }
 
     @Override
-    public void putParcel(Parcel parcel) {
+    public void putParcel(ParcelOperationCommand command, Parcel parcel, Storage storage) {
         throw new UserDeactivatedException();
     }
 }

@@ -1,10 +1,12 @@
 package user;
 
+import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import storage.Storage;
 
-public interface User {
-    void getParcel(Parcel parcel);
+import java.util.Optional;
 
-    void putParcel(Parcel parcel);
+public interface User {
+    Optional<Parcel> getParcel(ParcelOperationCommand command, Storage storage);
+    void putParcel(ParcelOperationCommand command, Parcel parcel, Storage storage);
 }

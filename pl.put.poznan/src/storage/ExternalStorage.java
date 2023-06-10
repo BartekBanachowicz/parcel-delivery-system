@@ -1,7 +1,8 @@
 package storage;
 
+import operations.ParcelOperationCommand;
 import parcel.Parcel;
-import user.User;
+import storage.box.Box;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,17 +10,17 @@ import java.util.Optional;
 public class ExternalStorage implements Storage{
 
     @Override
-    public Optional<Parcel> giveOutParcel(User user, String accessCode) {
+    public Optional<Parcel> giveOutParcel(ParcelOperationCommand command) {
         return Optional.empty();
     }
 
     @Override
-    public List<Parcel> giveOutParcels(User user) {
-        return null;
+    public void acceptParcel(ParcelOperationCommand command, Parcel parcel) {
+
     }
 
     @Override
-    public void acceptParcel(User user, Parcel parcel) {
-
+    public List<Box> getBoxes() {
+        return null;
     }
 }

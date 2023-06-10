@@ -6,6 +6,9 @@ import user.User;
 import java.util.Optional;
 
 public interface Box {
-    Optional<Parcel> giveOutParcel(User user);
-    void acceptParcel(User user, Parcel parcel);
+    Optional<Parcel> giveOutParcel();
+    Parcel getParcel();
+    void acceptParcel(Parcel parcel);
+    boolean isEmpty();
+    boolean isBigEnough(Parcel parcel);
 }

@@ -1,21 +1,20 @@
 package storage;
 
+import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import storage.box.Box;
-import user.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import static operations.OperationType.GET;
+import static operations.OperationType.PUT;
+
 public class ParcelLocker implements Storage {
     private final List<Box> boxes;
-    private final HashMap<String, Box> parcelsMap;
 
     private ParcelLocker(List<Box> boxesList) {
         boxes = boxesList;
-        parcelsMap = new HashMap<>();
     }
 
     public static ParcelLocker of(List<Box> boxesList) {
@@ -23,25 +22,23 @@ public class ParcelLocker implements Storage {
     }
 
     @Override
-    public Optional<Parcel> giveOutParcel(User user, String accessCode) {
-        Optional<Box> box = Optional.ofNullable(parcelsMap.get(accessCode));
-        if(box.isEmpty()) {
+    public Optional<Parcel> giveOutParcel(ParcelOperationCommand command) {
+        if (PUT.equals(command.operationType())) {
             return Optional.empty();
         }
-        return box.get().giveOutParcel(user);
+        return command.user().getParcel(command, this);
     }
 
     @Override
-    public List<Parcel> giveOutParcels(User user) {
-        List<Parcel> parcels = new ArrayList<>();
-        for (Box box : boxes) {
-            box.giveOutParcel(user).ifPresent(parcels::add);
+    public void acceptParcel(ParcelOperationCommand command, Parcel parcel) {
+        if (GET.equals(command.operationType())) {
+            return;
         }
-        return parcels;
+        command.user().putParcel(command, parcel, this);
     }
 
     @Override
-    public void acceptParcel(User user, Parcel parcel) {
-
+    public List<Box> getBoxes() {
+        return boxes;
     }
 }

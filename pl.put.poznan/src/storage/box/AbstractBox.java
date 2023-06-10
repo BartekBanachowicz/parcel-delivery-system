@@ -7,13 +7,29 @@ import java.util.Optional;
 
 public class AbstractBox implements Box {
 
+
     @Override
-    public Optional<Parcel> giveOutParcel(User user) {
+    public Optional<Parcel> giveOutParcel() {
         return Optional.empty();
     }
 
     @Override
-    public void acceptParcel(User user, Parcel parcel) {
+    public Parcel getParcel() {
+        return null;
+    }
 
+    @Override
+    public void acceptParcel(Parcel parcel) {
+
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isBigEnough(Parcel parcel) {
+        return false;
     }
 }

@@ -16,20 +16,29 @@ public class LockerBox implements Box {
     }
 
     @Override
-    public Optional<Parcel> giveOutParcel(User user) {
-        if (parcel == null) {
-            return Optional.empty();
-        }
-        user.getParcel(parcel);
-        return Optional.ofNullable(parcel);
+    public Optional<Parcel> giveOutParcel() {
+        Optional<Parcel> parcelToBeGivenOut = Optional.ofNullable(parcel);
+        parcel = null;
+        return parcelToBeGivenOut;
     }
 
     @Override
-    public void acceptParcel(User user, Parcel parcel) {
-        if ((this.parcel != null) || (size.ordinal() < parcel.size().ordinal())) {
-            throw new RuntimeException();
-        }
-        user.putParcel(parcel);
-        //verify lack of parcel and size
+    public Parcel getParcel() {
+        return parcel;
+    }
+
+    @Override
+    public void acceptParcel(Parcel newParcel) {
+        parcel = newParcel;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return parcel == null;
+    }
+
+    @Override
+    public boolean isBigEnough(Parcel parcel) {
+        return size.ordinal() >= parcel.size().ordinal();
     }
 }
