@@ -1,4 +1,6 @@
 package user.courier;
 
-public interface CourierState {
+import user.User;
+
+public interface CourierState extends User {
 }
