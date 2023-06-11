@@ -11,7 +11,11 @@ import java.util.Optional;
 
 public class Client implements User {
 
-    private final PrivilegeService privilegeService = PrivilegeService.getInstance();
+    private final PrivilegeService privilegeService;
+
+    public Client(PrivilegeService privilegeService) {
+        this.privilegeService = privilegeService;
+    }
 
     @Override
     public void putParcel(ParcelOperationCommand command, Parcel parcel, Storage storage) {

@@ -5,12 +5,6 @@ import java.util.List;
 
 class StorageRepository {
 
-    private static final StorageRepository STORAGE_REPOSITORY = new StorageRepository();
-
-    static StorageRepository getInstance() {
-        return STORAGE_REPOSITORY;
-    }
-
     private final List<ParcelLocker> parcelLockerList;
     private final List<ExternalStorage> externalStorageList;
     private final List<IntermediateStorage> intermediateStorageList;

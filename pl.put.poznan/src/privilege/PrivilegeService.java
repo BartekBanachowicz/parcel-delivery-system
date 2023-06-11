@@ -7,15 +7,16 @@ import storage.Storage;
 import java.util.Optional;
 
 public class PrivilegeService {
-    private static final PrivilegeService privilegeService = new PrivilegeService();
 
-    public static PrivilegeService getInstance() {
-        return privilegeService;
+    private final PrivilegeRepository privilegeRepository;
+
+    public PrivilegeService(PrivilegeRepository privilegeRepository) {
+        this.privilegeRepository = privilegeRepository;
     }
 
     public boolean validate(Parcel parcel, Storage storage, ParcelOperationCommand command) {
         Privilege privilegeToCompare = new Privilege(parcel, command.user(), storage, command.operationType(), command.accessCode());
-        Optional<Privilege> sufficientPrivilege = PrivilegeRepository.getInstance()
+        Optional<Privilege> sufficientPrivilege = privilegeRepository
                 .getPrivileges()
                 .stream()
                 .filter(privilege -> privilege.equals(privilegeToCompare))
@@ -30,16 +31,16 @@ public class PrivilegeService {
     }
 
     public void addNewPrivilege(Privilege privilege) {
-        PrivilegeRepository.getInstance().addNewPrivilege(privilege);
+        privilegeRepository.addNewPrivilege(privilege);
     }
 
     public void dropPrivilege(Privilege privilege) {
-        PrivilegeRepository.getInstance().dropPrivilege(privilege);
+        privilegeRepository.dropPrivilege(privilege);
     }
 
     public boolean noValidPrivilegesPresent(Parcel parcel, Storage storage, ParcelOperationCommand command) {
         Privilege privilegeToCompare = new Privilege(parcel, command.user(), storage, command.operationType(), command.accessCode());
-        Optional<Privilege> sufficientPrivilege = PrivilegeRepository.getInstance()
+        Optional<Privilege> sufficientPrivilege = privilegeRepository
                 .getPrivileges()
                 .stream()
                 .filter(privilege -> privilege.storage().equals(storage)

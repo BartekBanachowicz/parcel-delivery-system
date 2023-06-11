@@ -5,12 +5,6 @@ import java.util.List;
 
 class PrivilegeRepository {
 
-    private static final PrivilegeRepository privilegeRepository = new PrivilegeRepository();
-
-    static PrivilegeRepository getInstance() {
-        return privilegeRepository;
-    }
-
     private final List<Privilege> privilegeList = new ArrayList<>();
 
     void addNewPrivilege(Privilege privilege) {

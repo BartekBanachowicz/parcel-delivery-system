@@ -2,7 +2,6 @@ package storage.box;
 
 import parcel.Parcel;
 import parcel.ParcelSize;
-import user.User;
 
 import java.util.Optional;
 
