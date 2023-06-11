@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface Storage {
     Optional<Parcel> giveOutParcel(ParcelOperationCommand command);
     void acceptParcel(ParcelOperationCommand command, Parcel parcel);
+    void executePostGiveOutAction(Box box);
     List<Box> getBoxes();
 }

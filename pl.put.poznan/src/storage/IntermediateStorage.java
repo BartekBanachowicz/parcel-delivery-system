@@ -2,24 +2,23 @@ package storage;
 
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
+import storage.box.AbstractBox;
 import storage.box.Box;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static operations.OperationType.GET;
 import static operations.OperationType.PUT;
 
 public class IntermediateStorage implements Storage{
 
-    private final List<Box> boxes;
+    private final Set<Box> boxes;
 
-    private IntermediateStorage(List<Box> boxes) {
-        this.boxes = boxes;
-    }
-
-    public static IntermediateStorage of(List<Box> boxesList) {
-        return new IntermediateStorage(boxesList);
+    public IntermediateStorage() {
+        this.boxes = new HashSet<>();
     }
 
     @Override
@@ -35,11 +34,17 @@ public class IntermediateStorage implements Storage{
         if (GET.equals(command.operationType())) {
             return;
         }
+        boxes.add(new AbstractBox());
         command.user().putParcel(command, parcel, this);
     }
 
     @Override
+    public void executePostGiveOutAction(Box box) {
+        boxes.remove(box);
+    }
+
+    @Override
     public List<Box> getBoxes() {
-        return boxes;
+        return boxes.stream().toList();
     }
 }

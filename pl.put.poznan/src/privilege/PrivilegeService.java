@@ -4,22 +4,31 @@ import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import storage.Storage;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 public class PrivilegeService {
 
     private final PrivilegeRepository privilegeRepository;
+    private final Clock clock;
 
-    public PrivilegeService(PrivilegeRepository privilegeRepository) {
+    public PrivilegeService(PrivilegeRepository privilegeRepository, Clock clock) {
         this.privilegeRepository = privilegeRepository;
+        this.clock = clock;
     }
 
     public boolean validate(Parcel parcel, Storage storage, ParcelOperationCommand command) {
-        Privilege privilegeToCompare = new Privilege(parcel, command.user(), storage, command.operationType(), command.accessCode());
+
         Optional<Privilege> sufficientPrivilege = privilegeRepository
                 .getPrivileges()
                 .stream()
-                .filter(privilege -> privilege.equals(privilegeToCompare))
+                .filter(privilege -> privilege.target().equals(parcel) &&
+                                    privilege.operationType().equals(command.operationType()) &&
+                                    privilege.actor().equals(command.user()) &&
+                                    privilege.storage().equals(storage) &&
+                                    privilege.accessCode().equals(command.accessCode()) &&
+                                    privilege.isValid(ZonedDateTime.now(clock)))
                 .findFirst();
 
         if (sufficientPrivilege.isPresent()) {
@@ -39,16 +48,15 @@ public class PrivilegeService {
     }
 
     public boolean noValidPrivilegesPresent(Parcel parcel, Storage storage, ParcelOperationCommand command) {
-        Privilege privilegeToCompare = new Privilege(parcel, command.user(), storage, command.operationType(), command.accessCode());
         Optional<Privilege> sufficientPrivilege = privilegeRepository
                 .getPrivileges()
                 .stream()
                 .filter(privilege -> privilege.storage().equals(storage)
                         && privilege.target().equals(parcel)
                         && privilege.operationType().equals(command.operationType())
+                        && privilege.isValid(ZonedDateTime.now(clock))
                 )
                 .findFirst();
-        //TODO: valid
         return sufficientPrivilege.isEmpty();
     }
 }

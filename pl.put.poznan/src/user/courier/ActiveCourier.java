@@ -1,22 +1,33 @@
 package user.courier;
 
+import notification.NotificationService;
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import parcel.ParcelService;
+import privilege.Privilege;
 import privilege.PrivilegeService;
 import storage.Storage;
 import storage.box.Box;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
+
+import static operations.OperationType.GET;
 
 public class ActiveCourier implements CourierState {
 
     private final PrivilegeService privilegeService;
     private final ParcelService parcelService;
+    private final NotificationService notificationService;
+    private final Clock clock;
 
-    public ActiveCourier(PrivilegeService privilegeService, ParcelService parcelService) {
+    public ActiveCourier(PrivilegeService privilegeService, ParcelService parcelService, NotificationService notificationService, Clock clock) {
         this.privilegeService = privilegeService;
         this.parcelService = parcelService;
+        this.notificationService = notificationService;
+        this.clock = clock;
     }
 
     @Override
@@ -46,7 +57,19 @@ public class ActiveCourier implements CourierState {
         }
 
         availableBox.get().acceptParcel(parcel);
-        parcelService.isFinalDestination(parcel, storage);
-        //TODO: privilegeService.addNewPrivilege();
+        if(parcelService.isFinalDestination(parcel, storage)){
+            String accessCode = UUID.randomUUID().toString().substring(0, 5);
+            privilegeService.addNewPrivilege(
+                    new Privilege(
+                            parcel,
+                            parcel.parcelReceiver(),
+                            storage,
+                            GET,
+                            Optional.of(accessCode),
+                            ZonedDateTime.now(clock).plusDays(2)
+                    )
+            );
+            notificationService.sendParcelDeliveredNotification(parcel.parcelReceiver(), parcel, accessCode);
+        }
     }
 }

@@ -38,6 +38,11 @@ public class ParcelLocker implements Storage {
     }
 
     @Override
+    public void executePostGiveOutAction(Box box) {
+
+    }
+
+    @Override
     public List<Box> getBoxes() {
         return boxes;
     }

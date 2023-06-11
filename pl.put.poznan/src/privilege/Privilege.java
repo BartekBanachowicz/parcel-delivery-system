@@ -5,6 +5,7 @@ import parcel.Parcel;
 import storage.Storage;
 import user.User;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 public record Privilege(
@@ -12,5 +13,10 @@ public record Privilege(
         User actor,
         Storage storage,
         OperationType operationType,
-        Optional<String> accessCode) {
+        Optional<String> accessCode,
+        ZonedDateTime expirationTime) {
+
+    boolean isValid(ZonedDateTime time) {
+        return expirationTime.isAfter(time);
+    }
 }

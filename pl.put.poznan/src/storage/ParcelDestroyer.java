@@ -2,32 +2,20 @@ package storage;
 
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
+import privilege.ForbiddenOperation;
+import storage.box.AbstractBox;
 import storage.box.Box;
 
 import java.util.List;
 import java.util.Optional;
 
 import static operations.OperationType.GET;
-import static operations.OperationType.PUT;
 
-public class ParcelDestroyer implements Storage{
-
-    private final List<Box> boxes;
-
-    private ParcelDestroyer(List<Box> boxes) {
-        this.boxes = boxes;
-    }
-
-    public static ParcelDestroyer of(List<Box> boxesList) {
-        return new ParcelDestroyer(boxesList);
-    }
+public class ParcelDestroyer implements Storage {
 
     @Override
     public Optional<Parcel> giveOutParcel(ParcelOperationCommand command) {
-        if (PUT.equals(command.operationType())) {
-            return Optional.empty();
-        }
-        return command.user().getParcel(command, this);
+        throw new ForbiddenOperation();
     }
 
     @Override
@@ -39,7 +27,12 @@ public class ParcelDestroyer implements Storage{
     }
 
     @Override
+    public void executePostGiveOutAction(Box box) {
+        throw new ForbiddenOperation();
+    }
+
+    @Override
     public List<Box> getBoxes() {
-        return boxes;
+        return List.of(new AbstractBox());
     }
 }
