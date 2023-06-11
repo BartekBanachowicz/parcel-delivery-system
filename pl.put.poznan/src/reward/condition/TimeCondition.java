@@ -14,7 +14,7 @@ public class TimeCondition extends RewardCondition {
     }
 
     @Override
-    public int validate() throws RewardIsNotValidException {
+    public double validate() throws RewardIsNotValidException {
         if (OffsetDateTime.now().isAfter(this.expirationDateTime)) {
             throw new RewardIsNotValidException("This reward has expired");
         }

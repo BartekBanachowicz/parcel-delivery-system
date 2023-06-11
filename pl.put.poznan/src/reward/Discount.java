@@ -1,13 +1,13 @@
 package reward;
 
 public class Discount implements Reward {
-    private final int value;
+    private final double value;
 
-    public Discount(int value) {
+    public Discount(double value) {
         this.value = value;
     }
 
-    public int validate() {
+    public double validate() {
         return this.value;
     }
 }

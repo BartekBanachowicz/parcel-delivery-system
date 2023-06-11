@@ -7,7 +7,7 @@ public abstract class RewardCondition implements Reward {
     protected Reward reward;
 
     @Override
-    public int validate() throws RewardIsNotValidException {
+    public double validate() throws RewardIsNotValidException {
         return this.reward.validate();
     }
 }

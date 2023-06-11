@@ -10,15 +10,21 @@ import storage.box.Box;
 import java.util.Optional;
 
 public class ActiveCourier implements CourierState {
-    private final PrivilegeService privilegeService = PrivilegeService.getInstance();
-    private final ParcelService parcelService = ParcelService.getInstance();
+
+    private final PrivilegeService privilegeService;
+    private final ParcelService parcelService;
+
+    public ActiveCourier(PrivilegeService privilegeService, ParcelService parcelService) {
+        this.privilegeService = privilegeService;
+        this.parcelService = parcelService;
+    }
 
     @Override
     public Optional<Parcel> getParcel(ParcelOperationCommand command, Storage storage) {
         Optional<Box> boxWithParcel = storage.getBoxes()
                 .stream()
                 .filter(box -> !box.isEmpty())
-                .filter(box -> privilegeService.noPrivilegesPresent(box.getParcel(), storage, command))
+                .filter(box -> privilegeService.noValidPrivilegesPresent(box.getParcel(), storage, command))
                 .findFirst();
 
         if (boxWithParcel.isEmpty()) {

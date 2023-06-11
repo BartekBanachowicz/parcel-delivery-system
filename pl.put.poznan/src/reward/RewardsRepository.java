@@ -1,47 +1,33 @@
 package reward;
 
-import java.util.ArrayList;
-import java.util.List;
-
-class RewardDoesntExistException extends Exception {
-    public RewardDoesntExistException(int rewardId) {
-        super(String.format("Reward with id %d doesn't exist", rewardId));
-    }
-}
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 class RewardsRepository {
-    private final List<Reward> rewards;
+    private final HashMap<String, Reward> rewards;
 
     public RewardsRepository() {
-        this.rewards = new ArrayList<>();
+        this.rewards = new HashMap<>();
     }
 
-    public int add(Reward reward) {
-        int rewardId = this.rewards.size();
-        this.rewards.add(rewardId, reward);
+    public String add(Reward reward) {
+        String rewardId = UUID.randomUUID().toString();
+        this.rewards.put(rewardId, reward);
         return rewardId;
     }
 
-    public Reward get(int rewardId) throws RewardDoesntExistException {
-        try {
-            return this.rewards.get(rewardId);
-        } catch (IndexOutOfBoundsException exception) {
+    public Reward get(String rewardId) throws RewardDoesntExistException {
+        Optional<Reward> reward = Optional.ofNullable(rewards.get(rewardId));
+        if(reward.isEmpty()) {
             throw new RewardDoesntExistException(rewardId);
         }
+        return reward.get();
     }
 
-    public void patch(int rewardId, Reward reward) throws RewardDoesntExistException {
-        try {
-            this.rewards.set(rewardId, reward);
-        } catch (IndexOutOfBoundsException exception) {
-            throw new RewardDoesntExistException(rewardId);
-        }
-    }
-
-    public void delete(int rewardId) throws RewardDoesntExistException {
-        try {
-            this.rewards.remove(rewardId);
-        } catch (IndexOutOfBoundsException exception) {
+    public void remove(String rewardId) throws RewardDoesntExistException {
+        Optional<Reward> reward = Optional.ofNullable(rewards.remove(rewardId));
+        if(reward.isEmpty()) {
             throw new RewardDoesntExistException(rewardId);
         }
     }

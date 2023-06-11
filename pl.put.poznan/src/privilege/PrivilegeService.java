@@ -1,10 +1,8 @@
 package privilege;
 
-import operations.OperationType;
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
 import storage.Storage;
-import user.User;
 
 import java.util.Optional;
 
@@ -39,7 +37,7 @@ public class PrivilegeService {
         PrivilegeRepository.getInstance().dropPrivilege(privilege);
     }
 
-    public boolean noPrivilegesPresent(Parcel parcel, Storage storage, ParcelOperationCommand command) {
+    public boolean noValidPrivilegesPresent(Parcel parcel, Storage storage, ParcelOperationCommand command) {
         Privilege privilegeToCompare = new Privilege(parcel, command.user(), storage, command.operationType(), command.accessCode());
         Optional<Privilege> sufficientPrivilege = PrivilegeRepository.getInstance()
                 .getPrivileges()
@@ -49,6 +47,7 @@ public class PrivilegeService {
                         && privilege.operationType().equals(command.operationType())
                 )
                 .findFirst();
+        //TODO: valid
         return sufficientPrivilege.isEmpty();
     }
 }
