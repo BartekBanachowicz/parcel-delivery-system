@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.Optional;
 
 class ParcelRepository {
-    private static final ParcelRepository PARCEL_REPOSITORY = new ParcelRepository();
-    static ParcelRepository getInstance() {
-            return PARCEL_REPOSITORY;
-    }
     private final HashMap<String, Parcel> parcelsMap = new HashMap<>();
     private final HashMap<String, Storage> destinationsMap = new HashMap<>();
 

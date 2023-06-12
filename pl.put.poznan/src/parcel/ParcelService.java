@@ -9,30 +9,37 @@ import privilege.PrivilegeService;
 import storage.Storage;
 import user.User;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static operations.OperationType.PUT;
+import static parcel.ParcelStatus.REGISTERED;
 import static parcel.ParcelStatus.UNKNOWN;
 
 public class ParcelService {
 
-    public ParcelService(PaymentService paymentService, EventLog eventLog, PrivilegeService privilegeService) {
+    public ParcelService(PaymentService paymentService, EventLog eventLog, PrivilegeService privilegeService, ParcelRepository parcelRepository, Clock clock) {
         this.paymentService = paymentService;
         this.eventLog = eventLog;
         this.privilegeService = privilegeService;
+        this.parcelRepository = parcelRepository;
+        this.clock = clock;
     }
 
     private final PaymentService paymentService;
     private final EventLog eventLog;
     private final PrivilegeService privilegeService;
-    private final ParcelRepository parcelRepository = ParcelRepository.getInstance();
+    private final ParcelRepository parcelRepository;
+    private final Clock clock;
 
-    public String registerNewParcel(ParcelSize size, Storage destination, PaymentMethod paymentMethod, String rewardId, User user) {
+    public String registerNewParcel(ParcelSize size, Storage destination, PaymentMethod paymentMethod, String rewardId, User sender, User receiver) {
         String parcelId = UUID.randomUUID().toString();
-        Parcel parcel = new Parcel(parcelId, size);
+        Parcel parcel = new Parcel(parcelId, size, receiver);
         parcelRepository.addNewParcel(parcel, destination);
-        paymentMethod.getCommand(parcel, user, rewardId, paymentService, this).execute();
+        eventLog.registerNewParcelEvent(new ParcelEvent(parcelId, null, REGISTERED, sender, ZonedDateTime.now(clock)));
+        paymentMethod.getCommand(parcel, sender, rewardId, paymentService, this).execute();
         return parcelId;
     }
 
@@ -55,6 +62,6 @@ public class ParcelService {
     }
 
     public void generateFirstPrivilege(Parcel parcel, User actor) {
-        privilegeService.addNewPrivilege(new Privilege(parcel, actor, null, PUT, null));
+        privilegeService.addNewPrivilege(new Privilege(parcel, actor, null, PUT, null, ZonedDateTime.now(clock).plusDays(2)));
     }
 }

@@ -1,5 +1,7 @@
 package user.courier;
 
+import log.EventLog;
+import log.ParcelEvent;
 import notification.NotificationService;
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
@@ -15,18 +17,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static operations.OperationType.GET;
+import static parcel.ParcelStatus.*;
 
 public class ActiveCourier implements CourierState {
 
     private final PrivilegeService privilegeService;
     private final ParcelService parcelService;
     private final NotificationService notificationService;
+    private final EventLog eventLog;
     private final Clock clock;
 
-    public ActiveCourier(PrivilegeService privilegeService, ParcelService parcelService, NotificationService notificationService, Clock clock) {
+    public ActiveCourier(PrivilegeService privilegeService, ParcelService parcelService, NotificationService notificationService, EventLog eventLog, Clock clock) {
         this.privilegeService = privilegeService;
         this.parcelService = parcelService;
         this.notificationService = notificationService;
+        this.eventLog = eventLog;
         this.clock = clock;
     }
 
@@ -42,6 +47,16 @@ public class ActiveCourier implements CourierState {
             return Optional.empty();
         }
 
+        storage.executePostGiveOutAction(boxWithParcel.get());
+        eventLog.registerNewParcelEvent(
+                new ParcelEvent(
+                        boxWithParcel.get().getParcel().parcelId(),
+                        storage,
+                        IN_TRANSPORT,
+                        this,
+                        ZonedDateTime.now(clock)
+                )
+        );
         return boxWithParcel.get().giveOutParcel();
     }
 
@@ -56,6 +71,15 @@ public class ActiveCourier implements CourierState {
             return;
         }
 
+        eventLog.registerNewParcelEvent(
+                new ParcelEvent(
+                        parcel.parcelId(),
+                        storage,
+                        IN_STORAGE,
+                        this,
+                        ZonedDateTime.now(clock)
+                )
+        );
         availableBox.get().acceptParcel(parcel);
         if(parcelService.isFinalDestination(parcel, storage)){
             String accessCode = UUID.randomUUID().toString().substring(0, 5);
