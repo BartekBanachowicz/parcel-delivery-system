@@ -4,8 +4,10 @@ import log.EventLog;
 import log.ParcelEvent;
 import operations.ParcelOperationCommand;
 import parcel.Parcel;
+import privilege.ForbiddenOperation;
 import privilege.PrivilegeService;
 import storage.Storage;
+import storage.StorageFullException;
 import storage.box.Box;
 import user.User;
 
@@ -31,7 +33,7 @@ public class Client implements User {
     @Override
     public void putParcel(ParcelOperationCommand command, Parcel parcel, Storage storage) {
         if (!privilegeService.validate(parcel, null, command)) {
-            return;
+            throw new ForbiddenOperation();
         }
 
         Optional<Box> availableBox = storage.getBoxes()
@@ -40,7 +42,7 @@ public class Client implements User {
                 .findFirst();
 
         if (availableBox.isEmpty()) {
-            return;
+            throw new StorageFullException();
         }
 
         eventLog.registerNewParcelEvent(

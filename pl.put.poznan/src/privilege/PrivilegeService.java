@@ -43,7 +43,7 @@ public class PrivilegeService {
         privilegeRepository.addNewPrivilege(privilege);
     }
 
-    public void dropPrivilege(Privilege privilege) {
+    private void dropPrivilege(Privilege privilege) {
         privilegeRepository.dropPrivilege(privilege);
     }
 

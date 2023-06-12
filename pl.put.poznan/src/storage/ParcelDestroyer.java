@@ -50,9 +50,7 @@ public class ParcelDestroyer implements Storage {
     }
 
     @Override
-    public void executePostGiveOutAction(Box box) {
-        
-    }
+    public void executePostGiveOutAction(Box box) {}
 
     @Override
     public List<Box> getBoxes() {

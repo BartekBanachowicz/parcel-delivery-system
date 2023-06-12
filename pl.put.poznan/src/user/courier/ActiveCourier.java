@@ -9,6 +9,7 @@ import parcel.ParcelService;
 import privilege.Privilege;
 import privilege.PrivilegeService;
 import storage.Storage;
+import storage.StorageFullException;
 import storage.box.Box;
 
 import java.time.Clock;
@@ -68,7 +69,7 @@ public class ActiveCourier implements CourierState {
                 .findFirst();
 
         if (availableBox.isEmpty()) {
-            return;
+            throw new StorageFullException();
         }
 
         eventLog.registerNewParcelEvent(
